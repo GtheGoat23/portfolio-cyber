@@ -1,0 +1,13 @@
+
+# Éviter d'exposer des artefacts & secrets
+*.pcap
+*.zip
+*.7z
+*.tar
+*.tar.gz
+*.log
+*.sqlite*
+.env
+secrets*
+__pycache__/
+.DS_Store
