@@ -1,0 +1,31 @@
+# Nmap 7.95 scan initiated Mon Sep  1 22:25:55 2025 as: /usr/lib/nmap/nmap -sV -oN docs/audits/nmap/nmap_scan.log 192.168.136.0/24
+Nmap scan report for 192.168.136.1 (192.168.136.1)
+Host is up (0.0018s latency).
+All 1000 scanned ports on 192.168.136.1 (192.168.136.1) are in ignored states.
+Not shown: 1000 filtered tcp ports (no-response)
+MAC Address: 00:50:56:C0:00:08 (VMware)
+
+Nmap scan report for 192.168.136.2 (192.168.136.2)
+Host is up (0.00070s latency).
+Not shown: 999 closed tcp ports (reset)
+PORT   STATE SERVICE VERSION
+53/tcp open  domain  (generic dns response: SERVFAIL)
+1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service :
+SF-Port53-TCP:V=7.95%I=7%D=9/1%Time=68B60167%P=x86_64-pc-linux-gnu%r(DNSVe
+SF:rsionBindReqTCP,20,"\0\x1e\0\x06\x81\x82\0\x01\0\0\0\0\0\0\x07version\x
+SF:04bind\0\0\x10\0\x03");
+MAC Address: 00:50:56:FE:0F:6D (VMware)
+
+Nmap scan report for 192.168.136.254 (192.168.136.254)
+Host is up (0.00040s latency).
+All 1000 scanned ports on 192.168.136.254 (192.168.136.254) are in ignored states.
+Not shown: 1000 filtered tcp ports (no-response)
+MAC Address: 00:50:56:EC:1C:8D (VMware)
+
+Nmap scan report for 192.168.136.130 (192.168.136.130)
+Host is up (0.0000060s latency).
+All 1000 scanned ports on 192.168.136.130 (192.168.136.130) are in ignored states.
+Not shown: 1000 closed tcp ports (reset)
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Mon Sep  1 22:26:20 2025 -- 256 IP addresses (4 hosts up) scanned in 24.94 seconds
