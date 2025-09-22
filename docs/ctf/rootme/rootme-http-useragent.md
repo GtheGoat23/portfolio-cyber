@@ -1,40 +1,45 @@
 
-# Root-Me – HTTP : User-Agent
+cd ~/Bureau/cyber/portfolio_starter/portfolio_starter
+mkdir -p docs/ctf/rootme
+cat > docs/ctf/rootme/rootme-http-mot-de-passe-faible.md <<'EOF'
+# Root-Me – HTTP : Mot de passe faible
 **Plate-forme :** Root-Me  
 **Catégorie :** Web-Serveur / HTTP  
-**Difficulté :** Moyen 
+**Difficulté :** Moyen
 **Score :** 10  
 
 ## Objectif
-Exploiter le header HTTP `User-Agent` pour contourner le filtrage et obtenir le mot de passe.
+Accéder au site protégé en contournant l’authentification grâce à des identifiants par défaut.
 
 ## Contexte et collecte d'informations
-- **Cible/URL :** Défi Root-Me HTTP – User-Agent (serveur ch2)  
-- **Observation :** La page semble vérifier la valeur du header `User-Agent`.  
-- En consultant l’historique des requêtes interceptées, on remarque que la réponse varie selon le client déclaré.  
+- **Cible/URL :** Défi Root-Me « Mot de passe faible ».  
+- **Observation :** La ressource est protégée par **HTTP Basic Auth** (header `Authorization`).  
+- En interceptant la requête, on peut **décoder la valeur Base64** pour lire les identifiants transmis.
 
 ## Démarche / Étapes
-1. Se connecter au site du challenge depuis le navigateur.  
-2. Dans Burp Suite, ouvrir l’**Historique HTTP** pour observer la requête envoyée.  
-3. Sélectionner cette requête et l’envoyer dans **Repeater**.  
-4. Modifier le header `User-Agent` en remplaçant sa valeur par `admin`.  
-5. Relancer la requête.  
-6. La réponse renvoie directement le mot de passe.
+1. Se connecter au site du challenge dans le navigateur.  
+2. Dans **Burp Suite**, intercepter la requête (Proxy → HTTP history).  
+3. Ouvrir la requête dans **Repeater** et noter le header :
+Authorization: Basic <base64(user:password)>
+4. **Décoder** la valeur Base64 pour révéler `user:password` essayés automatiquement par le client → accès refusé.  
+5. **Remplacer** ces identifiants par des **identifiants par défaut** `admin:admin`.  
+- Récoder en Base64 (ex. `admin:admin` → `YWRtaW46YWRtaW4=`) et remettre la valeur dans `Authorization`.  
+6. **Envoyer** la requête modifiée depuis Repeater → accès accordé / mot de passe du challenge obtenu.
 
 ## Détails techniques
-- **Outils :** Burp Suite (Proxy, Repeater)  
-- **Commandes clés :** Modification des headers HTTP  
-- **Technique :** Usurpation de l’`User-Agent` pour simuler l’accès administrateur  
+- **Outils :** Burp Suite (Proxy, Repeater), encodeur/décodeur Base64 intégré.  
+- **Actions clés :** Décodage/encodage Base64, modification du header `Authorization`.  
 
 ## Cause profonde et vulnérabilité
-- Le serveur se base uniquement sur la valeur du header `User-Agent` pour autoriser l’accès.  
-- **CWE-290 : Authentication Bypass Using Spoofing**  
-- Contremesures :  
-  - Ne pas utiliser les en-têtes HTTP comme mécanisme d’authentification.  
-  - Implémenter une authentification serveur robuste (sessions, tokens).  
+1. **Identifiants par défaut** non changés (`admin:admin`). → **CWE-521: Weak Password Requirements**.  
+2. **Exposition d’informations sensibles** dans les requêtes (Basic Auth décodable ; et si des paramètres sensibles passent en GET, ils finissent dans l’URL, l’historique et les logs). → **CWE-598: Use of GET for Sensitive Data**.  
+
+### Contremesures
+- Supprimer/renforcer les credentials par défaut, exiger des mots de passe forts, limiter les tentatives.  
+- **Ne jamais** envoyer de données sensibles en GET ; préférer POST et surtout **HTTPS**.  
+- Remplacer Basic Auth par un mécanisme robuste (sessions, tokens) et activer TLS strict.
 
 ## Leçons apprises
-- Les en-têtes HTTP sont **facilement manipulables** avec des outils comme Burp Suite.  
-- Il ne faut jamais se fier à des valeurs fournies par le client pour contrôler l’accès.  
-- Ce type de challenge illustre une **faille logique triviale**, mais encore fréquente sur des applis mal sécurisées.
-
+- **Basic Auth ≠ chiffrement** : sans TLS, la valeur Base64 est triviale à lire.  
+- Les **mots de passe par défaut** restent une porte d’entrée classique.  
+- Éviter d’exposer des identifiants dans les URLs et logs.
